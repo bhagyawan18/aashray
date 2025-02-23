@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String             @id @default(cuid()) @map("_id")
+  clerkId           String             @unique
+  email             String             @unique
+  name              String?
+  role              String             @default("MEMBER")
+  emergencyContacts EmergencyContact[]
+  reports           Report[]
+  resources         Resource[]
+  comments          Comment[]          // New relation
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+model EmergencyContact {
+  id           String   @id @default(cuid()) @map("_id")
+  name         String
+  phone        String
+  relationship String
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Resource {
+  id          String   @id @default(cuid()) @map("_id")
+  name        String
+  type        String
+  location    Json
+  status      String   @default("AVAILABLE")
+  quantity    Int?
+  description String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Report {
+  id          String   @id @default(cuid()) @map("_id")
+  title       String
+  description String
+  type        String
+  location    Json
+  imageUrl    String?
+  verified    Boolean  @default(false)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Disaster {
+  id          String   @id @default(cuid()) @map("_id")
+  type        String
+  location    Json
+  description String
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Post {
+  id        String    @id @default(cuid()) @map("_id")
+  content   String
+  imageUrl  String?
+  userId    String
+  comments  Comment[]
+  likes     Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Comment {
+  id        String   @id @default(cuid()) @map("_id")
+  content   String
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
