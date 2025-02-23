@@ -97,5 +97,3 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - [Embla Carousel](https://www.embla-carousel.com/) for carousel implementation.
 
 ---
-
-*Note: This README is based on the information available from the Aashray project and associated resources.* 
